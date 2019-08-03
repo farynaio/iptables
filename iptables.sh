@@ -6,11 +6,6 @@ iptables -F
 
 iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 
-# LOG & ACCEPT chain.
-iptables -N LOG_ACCEPT
-iptables -A LOG_ACCEPT -m limit --limit 3/min -j LOG --log-prefix "iptables_INPUT_accepted: " --log-level 4
-iptables -A LOG_ACCEPT -j ACCEPT
-
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT ACCEPT
@@ -23,11 +18,9 @@ iptables -A INPUT ! -i lo -s 127.0.0.0/8 -j REJECT
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 # Unlock services port.
-iptables -A INPUT -i eth0 -p tcp -m state --state NEW --dport 3000 -j LOG_ACCEPT
+iptables -A INPUT -i eth0 -p tcp -m state --state NEW --dport 3000 -j ACCEPT
 
-# Log any packets which don't fit the rules above.
-# (optional but useful)
-iptables -A INPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_INPUT_denied: " --log-level 4
+iptables -A INPUT -i eth0 -p tcp -m limit --limit 3/min -m state --state NEW -j LOG --log-level 4
 
 # iptables save
 iptables-save > /etc/iptables/rules.v4
