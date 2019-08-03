@@ -30,6 +30,6 @@ iptables -A INPUT -i eth0 -p tcp -m state --state NEW --dport 3000 -j LOG_ACCEPT
 iptables -A INPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_INPUT_denied: " --log-level 4
 
 # iptables save
-# iptables-save > /etc/iptables/rules.v4
+iptables-save > /etc/iptables/rules.v4
 
-iptables -L -v
+iptables -L
